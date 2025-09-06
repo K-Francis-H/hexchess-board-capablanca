@@ -75,7 +75,7 @@ export const renderPiece = (
   />`;
 };
 
-const pieceUrls = {
+/*const pieceUrls = {
   'black-bishop':
     'https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png?20120721213129',
   'white-bishop':
@@ -100,4 +100,39 @@ const pieceUrls = {
     'https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png?20120721213136',
   'white-rook':
     'https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png?20120721213128',
+};
+*/
+const pieceUrls = {
+  'black-bishop':
+    '../img/black-bishop.png',
+  'white-bishop':
+    '../img/white-bishop.png',
+  'black-king':
+    '../img/black-king.png',
+  'white-king':
+    '../img/white-king.png',
+  'black-knight':
+    '../img/black-knight.png',
+  'white-knight':
+    '../img/white-knight.png',
+  'black-pawn':
+    '../img/black-pawn.png',
+  'white-pawn':
+    '../img/white-pawn.png',
+  'black-queen':
+    '../img/black-queen.png',
+  'white-queen':
+    '../img/white-queen.png',
+  'black-rook':
+    '../img/black-rook.png',
+  'white-rook':
+    '../img/white-rook.png',
+  'black-chancellor':
+    '../img/black-chancel.png',
+  'white-chancellor':
+    '../img/white-chancel.png',
+  'black-archbishop':
+    '../img/black-archbis.png',
+  'white-archbishop':
+    '../img/white-archbis.png',  
 };
