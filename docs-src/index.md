@@ -61,3 +61,47 @@ render(
 
   </div>
 </section>
+
+## Sound effects
+
+Built-in cues (move, capture, check, checkmate, victory, defeat, and draw) reuse [Lichess's standard sound pack](https://github.com/lichess-org/lila/tree/master/public/sound/standard) and are preloaded as soon as the element is connected. Toggle them with the boolean `muted` attribute or swap individual files by setting the `audio` property from JavaScript. Defaults stream from the mirrored copies at `https://hexagonchess.github.io/hexchess-board/assets/audio/*.mp3` (see `docs/assets/audio/LICENSE` for AGPL terms), so host your own files if you need different URLs or offline access.
+
+```html
+<hexchess-board id="audio-board" board="start"></hexchess-board>
+<button id="prime-audio">Enable audio</button>
+<script type="module">
+  const board = document.querySelector('#audio-board');
+  primeAudio.addEventListener('click', async () => {
+    await board.prepareAudio();
+    board.audio = {
+      move: '/assets/sounds/move.mp3',
+      capture: null, // disable capture cue
+    };
+  });
+</script>
+```
+
+The `prepareAudio()` helper lets you unlock and preload sounds during your own UI gesture (to satisfy autoplay restrictions) if your players won't click on the board directly.
+
+## Custom pieces
+
+Bring your own artwork by filling the hidden slots for each piece. Add `<img>` elements with slot names like `piece-white-queen` inside the component and every rendering surface (board, captured pieces, promotions) swaps to your graphics. Leave any slot empty to keep the default set.
+
+```html
+<hexchess-board board="start">
+  <img slot="piece-white-queen" src="/pieces/white-queen.svg" />
+  <img slot="piece-black-queen" src="/pieces/black-queen.svg" />
+  <img slot="piece-black-pawn" src="/pieces/black-pawn.svg" />
+</hexchess-board>
+```
+
+Available slots:
+
+- `piece-white-king` / `piece-black-king`
+- `piece-white-queen` / `piece-black-queen`
+- `piece-white-bishop` / `piece-black-bishop`
+- `piece-white-knight` / `piece-black-knight`
+- `piece-white-rook` / `piece-black-rook`
+- `piece-white-pawn` / `piece-black-pawn`
+
+Any image format the browser supports works (PNG, SVG, AVIF, etc.). The board scales assets to match the current hex size, so ship large, crisp art for the sharpest results.

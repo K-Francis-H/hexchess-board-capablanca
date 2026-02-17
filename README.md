@@ -12,13 +12,78 @@
 |:--------:|:----:|
 |![](./gifs/hexchess-perf.gif)|![](./gifs/hexchess-resize-perf.gif)|
 
-2. Completely customizable - every single color you see can be changed to whatever fits your style and liking! Soon, we will support [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot), which will also allow you to customize the pieces on the board.
+2. Completely customizable - every single color you see can be changed to whatever fits your style and liking! Provide your own artwork via [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) (for example, `piece-white-queen`) to override the built-in piece set.
 
 3. Can be standalone without a server! `hexchess-board` ships with a complete game engine that can detect illegal moves, checkmate, stalemate, and more! You can play with two players on the same laptop without any other dependencies, should you choose.
 
-4. Minimal dependencies - the web component has a single dependency that, when shipped in production mode, can mostly be tree shaken away. We use [Lit](https://lit.dev) for developer convenience when creating the web component, but the footprint is extremely small.
+4. Zero dependencies - built entirely using web standards, this board requires absolutely no external dependencies, so the footprint stays extremely small.
 
 Read the full documentation on [the website](https://mganjoo.github.io/gchessboard/).
+
+## Dark mode
+
+`hexchess-board` follows the surrounding page's preferred color scheme automatically (via `prefers-color-scheme`). You can override this behavior at any time with the `color-scheme` attribute or the `colorScheme` property (`'light'`, `'dark'`, or `'auto'`, which is the default).
+
+```html
+<hexchess-board color-scheme="dark"></hexchess-board>
+```
+
+Light mode keeps the existing pastel palette (`#a5c8df`, `#80b1d0`, `#4180a9`, `#e4c7b7`, etc.). Dark mode switches to deeper blues and warm highlights:
+
+- Board background `#050b16`
+- Tiles `#2f6b8f`, `#1f4767`, `#0f2b40`
+- Move highlights / capture rings `#f3c989`
+- Labels/player text `#f6f7fb`
+
+All of these values still come from the same CSS custom properties (`--hexchess-*`), so you can override individual colors per theme if you'd like.
+
+For per-theme customization without duplicating selectors, you can scope variables with `-light` or `-dark` suffixes (`--hexchess-board-bg-dark`, `--hexchess-board-bg-light`, etc.). When a themed value isn't provided, the component falls back to the base `--hexchess-*` value and then to the built-in palette.
+
+## Sound effects
+
+`<hexchess-board>` now mirrors Lichess's [standard sound pack](https://github.com/lichess-org/lila/tree/master/public/sound/standard) (`move`, `capture`, `check`, `checkmate`, `victory`, `defeat`, `draw`) and serves it from this repo's GitHub Pages site, keeping the npm tarball tiny while remaining future-proof. Sounds are preloaded as soon as the element is connected so they fire instantly when moves resolve, check is declared, or the game finishes. Browsers still require a user gesture before audio playback, so either let players click/tap the board once or call `board.prepareAudio()` inside your own button handler.
+
+- Toggle audio entirely via the boolean `muted` attribute/property.
+- Override specific cues by assigning the `audio` property. Each entry accepts a string URL, `null` (disable), or `{src, volume, playbackRate}`.
+- Default cue URLs point at `https://hexagonchess.github.io/hexchess-board/assets/audio/*.mp3`. If you need to run offline or use your own branding, copy those files to your infra/CDN and point `audio` to the new URLs.
+
+```js
+const board = document.querySelector('hexchess-board');
+board.audio = {
+  move: '/my-sounds/move.mp3',
+  capture: { src: '/my-sounds/capture.mp3', volume: 0.75 },
+  victory: null, // turn off the victory cue
+};
+
+startButton.addEventListener('click', () => {
+  board.prepareAudio(); // unlocks + preloads audio inside a user gesture
+});
+```
+
+If you want to reuse the shipped cues from JS you can import `DEFAULT_SOUND_PACK` from the package and merge it with your overrides.
+
+## Custom pieces
+
+Slots expose each piece so you can bring your own set without forking the component. Drop `<img>` tags inside the element with the matching slot name and the board, captured piece tray, and promotion dialog will automatically switch to your artwork.
+
+```html
+<hexchess-board board="start">
+  <img slot="piece-white-queen" src="/pieces/white-queen.svg" />
+  <img slot="piece-black-queen" src="/pieces/black-queen.svg" />
+  <img slot="piece-black-pawn" src="/pieces/black-pawn.svg" />
+</hexchess-board>
+```
+
+| Slot name | Piece |
+| --------- | ----- |
+| `piece-white-king` / `piece-black-king` | King (`K`/`k`) |
+| `piece-white-queen` / `piece-black-queen` | Queen (`Q`/`q`) |
+| `piece-white-bishop` / `piece-black-bishop` | Bishop (`B`/`b`) |
+| `piece-white-knight` / `piece-black-knight` | Knight (`N`/`n`) |
+| `piece-white-rook` / `piece-black-rook` | Rook (`R`/`r`) |
+| `piece-white-pawn` / `piece-black-pawn` | Pawn (`P`/`p`) |
+
+Only the slots you fill are overridden—the rest fall back to the bundled Wikimedia set—so you can replace one piece or the entire collection. Since the board draws onto a canvas, use `<img>` elements (any format the browser can load works, including SVG and PNG). The component scales everything to the current board size, so ship high-resolution art for the cleanest result.
 
 ## Installing
 

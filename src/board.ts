@@ -5,8 +5,10 @@ import { Pawn } from './pawn';
 import { Position } from './position';
 import { Queen } from './queen';
 import { Rook } from './rook';
-import { Color, HexchessPiece, Piece } from './types';
-import { Square } from './utils';
+import { Archbishop } from './archbishop';
+import { Chancellor } from './chancellor';
+import type { Color, HexchessPiece, Piece } from './types';
+import type { Square } from './utils';
 
 export class Board {
   readonly pieces: Record<Square, HexchessPiece | null>;
@@ -31,6 +33,10 @@ export class Board {
         clone.addPiece(new Bishop(piece.color, piece.position));
       } else if (piece instanceof Knight) {
         clone.addPiece(new Knight(piece.color, piece.position));
+      } else if (piece instanceof Archbishop) {
+        clone.addPiece(new Archbishop(piece.color, piece.position));
+      } else if (piece instanceof Chancellor) {
+        clone.addPiece(new Chancellor(piece.color, piece.position));
       } else {
         throw new Error('Invalid piece type');
       }
@@ -67,14 +73,15 @@ export class Board {
     positions.E7 = new Pawn('black', new Position('E', 7));
     positions.E10 = new Queen('black', new Position('E', 10));
 
-    positions.F1 = new Bishop('white', new Position('F', 1));
-    positions.F2 = new Bishop('white', new Position('F', 2));
+    //TODO return the Bishops, this is just easy for testing the movesets
+    positions.F1 = new Archbishop('white', new Position('F', 1)); //Bishop
+    positions.F2 = new Chancellor('white', new Position('F', 2));     //Bishop
     positions.F3 = new Bishop('white', new Position('F', 3));
     positions.F5 = new Pawn('white', new Position('F', 5));
     positions.F7 = new Pawn('black', new Position('F', 7));
     positions.F9 = new Bishop('black', new Position('F', 9));
-    positions.F10 = new Bishop('black', new Position('F', 10));
-    positions.F11 = new Bishop('black', new Position('F', 11));
+    positions.F10 = new Chancellor('black', new Position('F', 10)); //Bishop
+    positions.F11 = new Archbishop('black', new Position('F', 11)); //Bishop
 
     positions.G1 = new King('white', new Position('G', 1));
     positions.G4 = new Pawn('white', new Position('G', 4));
@@ -120,7 +127,7 @@ export class Board {
   private _resetPawnsDidMoveTwoSquares() {
     for (const [square, piece] of Object.entries(this.pieces)) {
       if (piece === null || !(piece instanceof Pawn)) {
-        return;
+        continue;
       }
 
       this.pieces[square as Square] = new Pawn(
@@ -222,6 +229,22 @@ export class Board {
         this.pieces[square] = new King('white', Position.fromString(square));
         break;
       }
+      case 'A': {
+        this.pieces[square] = new Archbishop('white', Position.fromString(square));
+        break;
+      }
+      case 'a': {
+        this.pieces[square] = new Archbishop('black', Position.fromString(square));
+        break;
+      }
+      case 'C': {
+        this.pieces[square] = new Chancellor('white', Position.fromString(square));
+        break;
+      }
+      case 'c': {
+        this.pieces[square] = new Chancellor('black', Position.fromString(square));
+        break;
+      }
     }
   }
 
@@ -249,6 +272,10 @@ export class Board {
       this.pieces[to.toSquare()] = new Bishop(piece.color, to);
     } else if (piece instanceof Knight) {
       this.pieces[to.toSquare()] = new Knight(piece.color, to);
+    } else if (piece instanceof Archbishop) {
+      this.pieces[to.toSquare()] = new Archbishop(piece.color, to);
+    } else if (piece instanceof Chancellor) {
+      this.pieces[to.toSquare()] = new Chancellor(piece.color, to);
     } else {
       throw new Error('Invalid piece type');
     }
@@ -334,6 +361,10 @@ export class Board {
       this.pieces[to.toSquare()] = new Bishop(fromPiece.color, to);
     } else if (fromPiece instanceof Knight) {
       this.pieces[to.toSquare()] = new Knight(fromPiece.color, to);
+    } else if (fromPiece instanceof Archbishop) {
+      this.pieces[to.toSquare()] = new Archbishop(fromPiece.color, to);
+    } else if (fromPiece instanceof Chancellor) {
+      this.pieces[to.toSquare()] = new Chancellor(fromPiece.color, to);
     } else {
       throw new Error('Invalid piece type');
     }

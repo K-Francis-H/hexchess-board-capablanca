@@ -21,14 +21,14 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
+    "skipLibCheck": true,
     "plugins": [
       {
         "name": "ts-lit-plugin",
         "strict": true,
         "globalTags": ["g", "polygon"]
       }
-    ],
-    "types": ["mocha"]
+    ]
   },
   "include": ["src/**/*.ts"],
   "exclude": []
