@@ -1,8 +1,9 @@
-import type { Board } from './board';
+import type { Board } from './board_capablanca';
 import type { Color } from './types';
-import { COLUMN_ARRAY, type Column, type Square } from './utils';
+//import type { Position } from './position'
+import { COLUMN_ARRAY, type Column, type Square } from './utils_capablanca';
 
-export class PositionCapablanca {
+export class Position {
   readonly col: Column;
   readonly row: number;
 
@@ -464,15 +465,19 @@ export class PositionCapablanca {
       case 'F':
         return new Position('D', this.row - 1);
       case 'G':
-        return new Position('E', this.row);
+        return new Position('E', this.row - 1);
       case 'H':
-        return new Position('F', this.row + 1);
+        return new Position('F', this.row);
       case 'I':
-        return new Position('G', this.row + 1);
+        return new Position('G', this.row - 1);
       case 'K':
-        return new Position('H', this.row + 1);
+        return new Position('H', this.row - 1);
       case 'L':
-        return new Position('I', this.row + 1);
+        return new Position('I', this.row - 1);
+      case 'M':
+        return new Position('K', this.row - 1);
+      case 'N':
+        return new Position('L', this.row - 1);
       case 'A':
       case 'B':
         return null;

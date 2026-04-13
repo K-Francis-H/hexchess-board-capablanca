@@ -17,7 +17,7 @@ import {
   PIECE_ASSET_URLS,
   renderPiece,
 } from './piece';
-import type { Color, Move, Orientation, Piece, Role, TileColor } from './types';
+import type { Color, Move, Orientation, Piece, Role, TileColor, Variant } from './types';
 import {
   ALL_SQUARES,
   ANNOTATED_BLACK_SQUARES,
@@ -501,7 +501,7 @@ export class HexchessBoard extends HTMLElement {
     this._handleColorSchemeChange();
   }
 
-  constructor() {
+  constructor(variant: Variant ='Glinski') {
     super();
     this.attachShadow({ mode: 'open' });
     this._recalculateBoardCoordinates();
