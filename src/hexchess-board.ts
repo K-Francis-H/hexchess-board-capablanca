@@ -194,9 +194,15 @@ export class HexchessBoard extends HTMLElement {
   private _boundWindowPointerMove = (event: MouseEvent | PointerEvent) =>
     this._handleMouseMove(event);
 
+  private _variant: Variant = 'Glinski';
+
   // -----------------
   // Public properties
   // -----------------
+
+  get variant(): Variant {
+    return this._variant;
+  }
 
   /**
    * Whose turn it is initially
@@ -504,6 +510,7 @@ export class HexchessBoard extends HTMLElement {
   constructor(variant: Variant ='Glinski') {
     super();
     this.attachShadow({ mode: 'open' });
+    this._variant = variant;
     this._recalculateBoardCoordinates();
   }
 

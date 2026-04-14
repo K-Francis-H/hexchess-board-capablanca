@@ -73,15 +73,14 @@ export class Board {
     positions.E7 = new Pawn('black', new Position('E', 7));
     positions.E10 = new Queen('black', new Position('E', 10));
 
-    //TODO return the Bishops, this is just easy for testing the movesets
-    positions.F1 = new Archbishop('white', new Position('F', 1)); //Bishop
-    positions.F2 = new Chancellor('white', new Position('F', 2));     //Bishop
+    positions.F1 = new Bishop('white', new Position('F', 1)); 
+    positions.F2 = new Bishop('white', new Position('F', 2));     
     positions.F3 = new Bishop('white', new Position('F', 3));
     positions.F5 = new Pawn('white', new Position('F', 5));
     positions.F7 = new Pawn('black', new Position('F', 7));
     positions.F9 = new Bishop('black', new Position('F', 9));
-    positions.F10 = new Chancellor('black', new Position('F', 10)); //Bishop
-    positions.F11 = new Archbishop('black', new Position('F', 11)); //Bishop
+    positions.F10 = new Bishop('black', new Position('F', 10)); 
+    positions.F11 = new Bishop('black', new Position('F', 11)); 
 
     positions.G1 = new King('white', new Position('G', 1));
     positions.G4 = new Pawn('white', new Position('G', 4));

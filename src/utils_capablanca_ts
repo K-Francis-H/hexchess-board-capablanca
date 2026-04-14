@@ -1,5 +1,5 @@
 import { Board } from './board_capablanca';
-import type { Color, Move, Piece } from './types';
+import type { Color, Move, Piece } from './types_capablanca';
 
 export const RESIGNATION_MARKER = 'R';
 export const CHECKMATE_MARKER = '#';

@@ -7,7 +7,7 @@ import { Queen } from './queen';
 import { Rook } from './rook';
 import { Archbishop } from './archbishop';
 import { Chancellor } from './chancellor';
-import type { Color, HexchessPiece, Piece } from './types';
+import type { Color, HexchessPiece, Piece } from './types_capablanca';
 import type { Square } from './utils_capablanca';
 
 export class Board {
