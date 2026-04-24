@@ -1,0 +1,349 @@
+import { Bishop } from './bishop';
+import { King } from './king';
+import { Knight } from './knight';
+import { Pawn } from './pawn';
+import { Position } from './position_capablanca';
+import { Queen } from './queen';
+import { Rook } from './rook';
+import { Archbishop } from './archbishop';
+import { Chancellor } from './chancellor';
+export class Board {
+    static clone(board) {
+        const clone = Board.empty();
+        for (const piece of Object.values(board.pieces)) {
+            if (piece === null) {
+                continue;
+            }
+            if (piece instanceof Pawn) {
+                clone.addPiece(new Pawn(piece.color, piece.position, piece.didMoveTwoSquares));
+            }
+            else if (piece instanceof King) {
+                clone.addPiece(new King(piece.color, piece.position));
+            }
+            else if (piece instanceof Queen) {
+                clone.addPiece(new Queen(piece.color, piece.position));
+            }
+            else if (piece instanceof Rook) {
+                clone.addPiece(new Rook(piece.color, piece.position));
+            }
+            else if (piece instanceof Bishop) {
+                clone.addPiece(new Bishop(piece.color, piece.position));
+            }
+            else if (piece instanceof Knight) {
+                clone.addPiece(new Knight(piece.color, piece.position));
+            }
+            else if (piece instanceof Archbishop) {
+                clone.addPiece(new Archbishop(piece.color, piece.position));
+            }
+            else if (piece instanceof Chancellor) {
+                clone.addPiece(new Chancellor(piece.color, piece.position));
+            }
+            else {
+                throw new Error('Invalid piece type');
+            }
+        }
+        return clone;
+    }
+    static empty() {
+        const positions = Object.fromEntries(Position.allPositions().map((pos) => [pos.toSquare(), null]));
+        return new Board(positions);
+    }
+    static new() {
+        const positions = Object.fromEntries(Position.allPositions().map((pos) => [pos.toSquare(), null]));
+        positions.B1 = new Pawn('white', new Position('B', 1));
+        positions.B7 = new Pawn('black', new Position('B', 7));
+        positions.C1 = new Rook('white', new Position('C', 1));
+        positions.C2 = new Pawn('white', new Position('C', 2));
+        positions.C7 = new Pawn('black', new Position('C', 7));
+        positions.C8 = new Rook('black', new Position('C', 8));
+        positions.D1 = new Knight('white', new Position('D', 1));
+        positions.D3 = new Pawn('white', new Position('D', 3));
+        positions.D7 = new Pawn('black', new Position('D', 7));
+        positions.D9 = new Knight('black', new Position('D', 9));
+        positions.E1 = new Queen('white', new Position('E', 1));
+        positions.E4 = new Pawn('white', new Position('E', 4));
+        positions.E7 = new Pawn('black', new Position('E', 7));
+        positions.E10 = new Queen('black', new Position('E', 10));
+        //TODO return the Bishops, this is just easy for testing the movesets
+        positions.F1 = new Archbishop('white', new Position('F', 1)); //Bishop
+        positions.F2 = new Chancellor('white', new Position('F', 2)); //Bishop
+        positions.F3 = new Bishop('white', new Position('F', 3));
+        positions.F5 = new Pawn('white', new Position('F', 5));
+        positions.F7 = new Pawn('black', new Position('F', 7));
+        positions.F9 = new Bishop('black', new Position('F', 9));
+        positions.F10 = new Chancellor('black', new Position('F', 10)); //Bishop
+        positions.F11 = new Archbishop('black', new Position('F', 11)); //Bishop
+        positions.G1 = new King('white', new Position('G', 1));
+        positions.G4 = new Pawn('white', new Position('G', 4));
+        positions.G7 = new Pawn('black', new Position('G', 7));
+        positions.G10 = new King('black', new Position('G', 10));
+        positions.H1 = new Knight('white', new Position('H', 1));
+        positions.H3 = new Pawn('white', new Position('H', 3));
+        positions.H7 = new Pawn('black', new Position('H', 7));
+        positions.H9 = new Knight('black', new Position('H', 9));
+        positions.I1 = new Rook('white', new Position('I', 1));
+        positions.I2 = new Pawn('white', new Position('I', 2));
+        positions.I7 = new Pawn('black', new Position('I', 7));
+        positions.I8 = new Rook('black', new Position('I', 8));
+        positions.K1 = new Pawn('white', new Position('K', 1));
+        positions.K7 = new Pawn('black', new Position('K', 7));
+        return new Board(positions);
+    }
+    constructor(pieces) {
+        this.pieces = pieces;
+    }
+    _canMoveTo(from, to) {
+        const piece = this.pieces[from.toSquare()];
+        if (piece === null) {
+            return false;
+        }
+        if (!(to.toSquare() in this.pieces)) {
+            return false;
+        }
+        if (this.pieces[to.toSquare()] !== null) {
+            return false;
+        }
+        return piece
+            .allSquareMoves(this)
+            .some((pos) => pos.col === to.col && pos.row === to.row);
+    }
+    _resetPawnsDidMoveTwoSquares() {
+        for (const [square, piece] of Object.entries(this.pieces)) {
+            if (piece === null || !(piece instanceof Pawn)) {
+                continue;
+            }
+            this.pieces[square] = new Pawn(piece.color, piece.position, false);
+        }
+    }
+    getKing(color) {
+        for (const piece of Object.values(this.pieces)) {
+            if (piece instanceof King && piece.color === color) {
+                return piece;
+            }
+        }
+        throw new Error(`No ${color} king found`);
+    }
+    numPieces() {
+        const squares = Object.keys(this.pieces);
+        return squares.filter((s) => this.getPiece(s) !== null).length;
+    }
+    getPieces(color) {
+        return Object.values(this.pieces).filter((piece) => piece !== null && piece.color === color);
+    }
+    getPiece(square) {
+        return this.pieces[square] || null;
+    }
+    hasOppositeColorPiece(square, color) {
+        const piece = this.getPiece(square);
+        return piece !== null && piece.color !== color;
+    }
+    removePiece(square) {
+        this.pieces[square] = null;
+    }
+    addPiece(piece) {
+        this.pieces[piece.position.toSquare()] = piece;
+    }
+    addPieceFromString(square, piece) {
+        if (piece === null) {
+            this.pieces[square] = null;
+            return;
+        }
+        switch (piece) {
+            case 'p': {
+                this.pieces[square] = new Pawn('black', Position.fromString(square));
+                break;
+            }
+            case 'P': {
+                this.pieces[square] = new Pawn('white', Position.fromString(square));
+                break;
+            }
+            case 'r': {
+                this.pieces[square] = new Rook('black', Position.fromString(square));
+                break;
+            }
+            case 'R': {
+                this.pieces[square] = new Rook('white', Position.fromString(square));
+                break;
+            }
+            case 'n': {
+                this.pieces[square] = new Knight('black', Position.fromString(square));
+                break;
+            }
+            case 'N': {
+                this.pieces[square] = new Knight('white', Position.fromString(square));
+                break;
+            }
+            case 'b': {
+                this.pieces[square] = new Bishop('black', Position.fromString(square));
+                break;
+            }
+            case 'B': {
+                this.pieces[square] = new Bishop('white', Position.fromString(square));
+                break;
+            }
+            case 'q': {
+                this.pieces[square] = new Queen('black', Position.fromString(square));
+                break;
+            }
+            case 'Q': {
+                this.pieces[square] = new Queen('white', Position.fromString(square));
+                break;
+            }
+            case 'k': {
+                this.pieces[square] = new King('black', Position.fromString(square));
+                break;
+            }
+            case 'K': {
+                this.pieces[square] = new King('white', Position.fromString(square));
+                break;
+            }
+            case 'A': {
+                this.pieces[square] = new Archbishop('white', Position.fromString(square));
+                break;
+            }
+            case 'a': {
+                this.pieces[square] = new Archbishop('black', Position.fromString(square));
+                break;
+            }
+            case 'C': {
+                this.pieces[square] = new Chancellor('white', Position.fromString(square));
+                break;
+            }
+            case 'c': {
+                this.pieces[square] = new Chancellor('black', Position.fromString(square));
+                break;
+            }
+        }
+    }
+    movePiece(from, to, override = false) {
+        if (!this._canMoveTo(from, to) && !override) {
+            throw new Error(`Invalid move from ${from.toSquare()} to ${to.toSquare()}`);
+        }
+        this._resetPawnsDidMoveTwoSquares();
+        const piece = this.getPiece(from.toSquare());
+        this.pieces[from.toSquare()] = null;
+        if (piece instanceof Pawn) {
+            const didMoveTwoSquares = Position.areTwoSquaresApartVertically(from, to);
+            this.pieces[to.toSquare()] = new Pawn(piece.color, to, didMoveTwoSquares);
+        }
+        else if (piece instanceof King) {
+            this.pieces[to.toSquare()] = new King(piece.color, to);
+        }
+        else if (piece instanceof Queen) {
+            this.pieces[to.toSquare()] = new Queen(piece.color, to);
+        }
+        else if (piece instanceof Rook) {
+            this.pieces[to.toSquare()] = new Rook(piece.color, to);
+        }
+        else if (piece instanceof Bishop) {
+            this.pieces[to.toSquare()] = new Bishop(piece.color, to);
+        }
+        else if (piece instanceof Knight) {
+            this.pieces[to.toSquare()] = new Knight(piece.color, to);
+        }
+        else if (piece instanceof Archbishop) {
+            this.pieces[to.toSquare()] = new Archbishop(piece.color, to);
+        }
+        else if (piece instanceof Chancellor) {
+            this.pieces[to.toSquare()] = new Chancellor(piece.color, to);
+        }
+        else {
+            throw new Error('Invalid piece type');
+        }
+    }
+    promotePawn(square, newPiece) {
+        const possiblePawn = this.getPiece(square);
+        if (possiblePawn === null || !(possiblePawn instanceof Pawn)) {
+            throw new Error(`No pawn found at ${square}`);
+        }
+        if (!possiblePawn.canBePromoted()) {
+            throw new Error(`Pawn at ${square} cannot be promoted`);
+        }
+        switch (newPiece) {
+            case 'q':
+            case 'Q': {
+                this.pieces[square] = new Queen(possiblePawn.color, possiblePawn.position);
+                break;
+            }
+            case 'r':
+            case 'R': {
+                this.pieces[square] = new Rook(possiblePawn.color, possiblePawn.position);
+                break;
+            }
+            case 'b':
+            case 'B': {
+                this.pieces[square] = new Bishop(possiblePawn.color, possiblePawn.position);
+                break;
+            }
+            case 'n':
+            case 'N': {
+                this.pieces[square] = new Knight(possiblePawn.color, possiblePawn.position);
+                break;
+            }
+        }
+        this._resetPawnsDidMoveTwoSquares();
+    }
+    capturePiece(from, to) {
+        const fromPiece = this.getPiece(from.toSquare());
+        const toPiece = this.getPiece(to.toSquare());
+        if (fromPiece === null || toPiece === null) {
+            throw new Error('Both pieces must be non-null to capture - did you mean move?');
+        }
+        if (fromPiece.color === toPiece.color) {
+            throw new Error('Cannot capture your own piece');
+        }
+        if (toPiece instanceof King) {
+            throw new Error('Cannot capture a king');
+        }
+        this.pieces[from.toSquare()] = null;
+        if (fromPiece instanceof Pawn) {
+            this.pieces[to.toSquare()] = new Pawn(fromPiece.color, to, false);
+        }
+        else if (fromPiece instanceof King) {
+            this.pieces[to.toSquare()] = new King(fromPiece.color, to);
+        }
+        else if (fromPiece instanceof Queen) {
+            this.pieces[to.toSquare()] = new Queen(fromPiece.color, to);
+        }
+        else if (fromPiece instanceof Rook) {
+            this.pieces[to.toSquare()] = new Rook(fromPiece.color, to);
+        }
+        else if (fromPiece instanceof Bishop) {
+            this.pieces[to.toSquare()] = new Bishop(fromPiece.color, to);
+        }
+        else if (fromPiece instanceof Knight) {
+            this.pieces[to.toSquare()] = new Knight(fromPiece.color, to);
+        }
+        else if (fromPiece instanceof Archbishop) {
+            this.pieces[to.toSquare()] = new Archbishop(fromPiece.color, to);
+        }
+        else if (fromPiece instanceof Chancellor) {
+            this.pieces[to.toSquare()] = new Chancellor(fromPiece.color, to);
+        }
+        else {
+            throw new Error('Invalid piece type');
+        }
+        this._resetPawnsDidMoveTwoSquares();
+    }
+    enPassant(from, to) {
+        const fromPiece = this.getPiece(from.toSquare());
+        if (fromPiece === null || !(fromPiece instanceof Pawn)) {
+            throw new Error(`No pawn found at ${from.toSquare()}`);
+        }
+        this.pieces[from.toSquare()] = null;
+        let newPosition;
+        if (fromPiece.color === 'white') {
+            newPosition = to.getBottomPosition();
+        }
+        else {
+            newPosition = to.getTopPosition();
+        }
+        if (newPosition === null) {
+            throw new Error('This is impossible');
+        }
+        this.pieces[newPosition.toSquare()] = null;
+        this.pieces[to.toSquare()] = new Pawn(fromPiece.color, to, false);
+        this._resetPawnsDidMoveTwoSquares();
+    }
+}
+//# sourceMappingURL=board_capablanca.js.map

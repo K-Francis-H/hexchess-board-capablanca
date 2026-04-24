@@ -17,7 +17,7 @@ import {
   PIECE_ASSET_URLS,
   renderPiece,
 } from './piece';
-import type { Color, Move, Orientation, Piece, Role, TileColor } from './types';
+import type { Color, Move, Orientation, Piece, Role, TileColor, Variant } from './types';
 import {
   ALL_SQUARES,
   ANNOTATED_BLACK_SQUARES,
@@ -194,9 +194,15 @@ export class HexchessBoard extends HTMLElement {
   private _boundWindowPointerMove = (event: MouseEvent | PointerEvent) =>
     this._handleMouseMove(event);
 
+  private _variant: Variant = 'Glinski';
+
   // -----------------
   // Public properties
   // -----------------
+
+  get variant(): Variant {
+    return this._variant;
+  }
 
   /**
    * Whose turn it is initially
@@ -501,9 +507,10 @@ export class HexchessBoard extends HTMLElement {
     this._handleColorSchemeChange();
   }
 
-  constructor() {
+  constructor(variant: Variant ='Glinski') {
     super();
     this.attachShadow({ mode: 'open' });
+    this._variant = variant;
     this._recalculateBoardCoordinates();
   }
 

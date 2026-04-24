@@ -1,6 +1,6 @@
-import type { Board } from './board';
-import type { Position } from './position';
-import type { Square } from './utils';
+import type { Board } from './board_capablanca';
+import type { Position } from './position_capablanca';
+import type { Square } from './utils_capablanca';
 
 export type Color = 'white' | 'black' | 'grey';
 export type LegalMoves = Partial<Record<Square, Set<Square>>>;
@@ -41,5 +41,3 @@ export interface HexchessPiece {
 }
 
 export type Role = 'white' | 'black' | 'spectator' | 'analyzer';
-
-export type Variant = 'Glinski' | 'Glinski-Capablanca' | 'McCooey' | 'Shafran' | 'Starchess';

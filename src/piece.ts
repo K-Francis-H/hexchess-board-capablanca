@@ -2,13 +2,17 @@ import type { Piece } from './types';
 
 export const PIECE_VALUES: Record<Piece, number> = {
   k: 1_000,
-  q: 9,
+  q: 9.5, //9
+  c: 9,       //chancellor
+  a: 8.75,    //archbishop
   b: 3,
   n: 3,
   r: 5,
   p: 1,
   K: 1_000,
-  Q: 9,
+  Q: 9.5, //9
+  C: 9,       //chancellor
+  A: 8.75,    //archbishop
   B: 3,
   N: 3,
   R: 5,
@@ -20,12 +24,16 @@ export const DEFAULT_PIECE_SIZE = 60;
 export const PIECE_ASSET_IDS: Record<Piece, keyof typeof PIECE_ASSET_URLS> = {
   k: 'black-king',
   q: 'black-queen',
+  c: 'black-chancellor',
+  a: 'black-archbishop',
   b: 'black-bishop',
   n: 'black-knight',
   r: 'black-rook',
   p: 'black-pawn',
   K: 'white-king',
   Q: 'white-queen',
+  C: 'white-chancellor',
+  A: 'white-archbishop',
   B: 'white-bishop',
   N: 'white-knight',
   R: 'white-rook',
@@ -61,6 +69,8 @@ export const renderPiece = (
   />`;
 };
 
+
+/*
 export const PIECE_ASSET_URLS = {
   'black-bishop':
     'https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png?20120721213129',
@@ -86,6 +96,42 @@ export const PIECE_ASSET_URLS = {
     'https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png?20120721213136',
   'white-rook':
     'https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png?20120721213128',
+};
+
+*/
+export const PIECE_ASSET_URLS = {
+  'black-bishop':
+    '../img/black-bishop.png',
+  'white-bishop':
+    '../img/white-bishop.png',
+  'black-king':
+    '../img/black-king.png',
+  'white-king':
+    '../img/white-king.png',
+  'black-knight':
+    '../img/black-knight.png',
+  'white-knight':
+    '../img/white-knight.png',
+  'black-pawn':
+    '../img/black-pawn.png',
+  'white-pawn':
+    '../img/white-pawn.png',
+  'black-queen':
+    '../img/black-queen.png',
+  'white-queen':
+    '../img/white-queen.png',
+  'black-rook':
+    '../img/black-rook.png',
+  'white-rook':
+    '../img/white-rook.png',
+  'black-chancellor':
+    '../img/black-chancel.png',
+  'white-chancellor':
+    '../img/white-chancel.png',
+  'black-archbishop':
+    '../img/black-archbis.png',
+  'white-archbishop':
+    '../img/white-archbis.png',  
 };
 
 const pieceUrls = PIECE_ASSET_URLS;
