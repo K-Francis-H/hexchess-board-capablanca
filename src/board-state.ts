@@ -264,9 +264,11 @@ export class BoardStateMachine {
     }
     if (
       fromPiece instanceof Pawn &&
-      ( (fromPiece.color === "black" && Position.fromString(to).isBeginningOfColumn()) ||
-        (fromPiece.color === "white" && Position.fromString(to).isEndOfColumn()) )
-      ) {
+      ( 
+        (fromPiece.color === "black" && Position.fromString(to).isBeginningOfColumn()) ||
+        (fromPiece.color === "white" && Position.fromString(to).isEndOfColumn()) 
+      )
+    ) {
       return {
         state: {
           ...state,
